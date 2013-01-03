@@ -44,6 +44,7 @@ int scan() {
   return !digitalRead(KEY1);
 }
 
+
 void setup() {
   setupModeToggle();
 }
