@@ -69,9 +69,12 @@ void loop() {
       //testing HID_SendReport
       uint8_t KeyBuffer[8] = {0,0, scancode,0,0,0,0,0};
       HID_SendReport(2, KeyBuffer, 8);
+      //end testing
+    } else {
+      //TODO: only send empty buffer when prev buffer was not empty
+      //if previous buffer not empty.
       uint8_t EmptyKeyBuffer[8] = {0,0,0,0,0,0,0,0};
       HID_SendReport(2, EmptyKeyBuffer, 8);
-      //end testing
     }
   }
   delay(500);
