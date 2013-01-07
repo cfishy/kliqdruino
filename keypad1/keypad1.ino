@@ -16,7 +16,7 @@ const int scancode = 4; /* scan code to send */
   /* when toggle switch is open, LED should be on, indicating running mode. */
 
 int statusLED = 13;  /* built in LED */
-
+uint8_t KeyBuffer[8] = {0,0,0,0,0,0,0,0};
 
 /* Setup a toggle to switch between 
    programming and run mode. Avoids interference. */
@@ -52,7 +52,17 @@ void setup() {
   setupModeToggle();
 }
 
+void clearKeyBuffer() {
+  for (int i = 0; i < 8; i++){
+    if (KeyBuffer[i] != 0) {
+      KeyBuffer[i] = 0;
+    }
+  }
+}
+
 void loop() {
+  
+  
   /* LED to indicate whether programming mode is on. */
   digitalWrite(statusLED, isRunState());
   /* TODO: optimize to use isRunState once */
@@ -67,15 +77,13 @@ void loop() {
         Serial.write(" test ");
       }
       //testing HID_SendReport
-      uint8_t KeyBuffer[8] = {0,0, scancode,0,0,0,0,0};
+      KeyBuffer[3] = scancode;
       HID_SendReport(2, KeyBuffer, 8);
       //end testing
     } else {
-      //TODO: only send empty buffer when prev buffer was not empty
-      //if previous buffer not empty.
-      uint8_t EmptyKeyBuffer[8] = {0,0,0,0,0,0,0,0};
-      HID_SendReport(2, EmptyKeyBuffer, 8);
+      clearKeyBuffer();
+      HID_SendReport(2, KeyBuffer, 8);
     }
   }
-  delay(500);
+  delay(50);
 }
