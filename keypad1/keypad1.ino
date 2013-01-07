@@ -1,12 +1,15 @@
 /* Copyright Hsiao-yu Chen  2012
    Arduino based keyboard controller.
 */
+#include <Usb.h>
 #include <Keypad.h>
 const bool PROGRAMMING = 1;  /* Programming mode */
 const bool DEBUGGING = 1;    /* Debug via Serial */
 const int MODE_TOGGLE = 2;   /* pin for mode toggle switch, short to ground */
 
 const int KEY1 = 9;   /* pin for the single key */
+
+const int scancode = 4; /* scan code to send */
 
 /* Mode toggle switch tester to ensure mode toggle is working. */
   /* when toggle switch is closed, LED should be off, indicating programming mode. */
@@ -60,8 +63,16 @@ void loop() {
   /* scan */
   if (isRunState() != PROGRAMMING) {
     if (scan()) {
-      Serial.write(" test ");
+      if (DEBUGGING) {
+        Serial.write(" test ");
+      }
+      //testing HID_SendReport
+      uint8_t KeyBuffer[8] = {0,0, scancode,0,0,0,0,0};
+      HID_SendReport(2, KeyBuffer, 8);
+      uint8_t EmptyKeyBuffer[8] = {0,0,0,0,0,0,0,0};
+      HID_SendReport(2, EmptyKeyBuffer, 8);
+      //end testing
     }
   }
-  delay(1000);
+  delay(500);
 }
